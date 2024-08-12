@@ -25,7 +25,7 @@ Globals:
     MemorySize: 256
     Timeout: 600
     Layers:
-      - !FindInMap [Environments, !Ref Environment, CertificateLayer]
+      - !FindInMap [Environments, !Ref Environment]
     Environment:
       Variables:
         ENVIRONMENT: !Ref Environment
