@@ -18,6 +18,7 @@ def lambda_handler(event, context):
                 "name": "Dioane",
                 "email": "diovane2gmail.com"
             })
+
         }
     except Exception as e:
         logger.error(f'Erro encontrado durante a integração: {str(e)}')
