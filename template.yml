@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: estudo-cognito-novo
+
+Parameters:
+  Environment:
+    Type: "String"
+    Default: "development"
+    AllowedValues: ["development", "production"]
+
+Mappings:
+  Environments:
+    development:
+      QueuePrefix: Development
+      ExtractorsEnabled: true
+      LoadersEnabled: true
+    production:
+      QueuePrefix: Production
+      ExtractorsEnabled: true
+      LoadersEnabled: true
+
+Globals:
+  Function:
+    Runtime: python3.9
+    MemorySize: 256
+    Timeout: 600
+    Layers:
+      - !FindInMap [Environments, !Ref Environment, CertificateLayer]
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+
+Resources:
+  EstudoCognitoNovoApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Join ["-", [!Ref Environment, "estudo-cognito-novo-api"]]
+      StageName: "v1"
+      EndpointConfiguration:
+        Type: REGIONAL
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'POST, OPTIONS'"
+        AllowHeaders: "'*'"
+
+  EstudoCognitoNovoQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:
+        !Join [
+          "",
+          [
+            !FindInMap [Environments, !Ref Environment, QueuePrefix],
+            "EstudoCognitoNovoQueue.fifo",
+          ],
+        ]
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
+
+  EmailExtract:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.extractor.email_extract.lambda_handler
+      FunctionName:
+        !Join ["-", ["email-extract", !Ref Environment]]
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonSQSFullAccess
+      Events:
+        PostApiEvent:
+          Type: Api
+          Properties:
+            Path: /webhook
+            Method: post
+            RestApiId: !Ref EstudoCognitoNovoApi

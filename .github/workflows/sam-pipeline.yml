@@ -1,0 +1,41 @@
+on:
+  push:
+    branches: [development, production]
+
+name: estudo-cognito-novo
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Python Setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: SAM Setup
+        uses: aws-actions/setup-sam@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Extract Branch Name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Install Dependencies
+        run: pip install -r ./requirements.txt -t dependencies/python
+
+      - name: Build Package
+        run: sam package --template-file ./template.yml --output-template-file ./packaged.yml --s3-bucket email-cognito-deploy
+
+      - name: Deploy
+        run: sam deploy --template-file ./packaged.yml --parameter-overrides Environment=${{ steps.extract_branch.outputs.branch }} --capabilities CAPABILITY_IAM --stack-name estudo-cognito-novo-stack-${{ steps.extract_branch.outputs.branch }} --region us-east-2
