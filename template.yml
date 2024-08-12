@@ -24,8 +24,6 @@ Globals:
     Runtime: python3.9
     MemorySize: 256
     Timeout: 600
-    Layers:
-      - !FindInMap [ Environments, !Ref Environment, "QueuePrefix" ]
     Environment:
       Variables:
         ENVIRONMENT: !Ref Environment
