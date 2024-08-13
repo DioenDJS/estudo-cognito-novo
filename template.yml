@@ -83,7 +83,7 @@ Resources:
   CognitoAuthorizerV2:
     Type: AWS::ApiGatewayV2::Authorizer
     Properties:
-      ApiId: !Ref EstudoCognitoNovoApi
+      ApiId: "development-estudo-cognito-novo"
       AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
       AuthorizerType: JWT
       IdentitySource:
