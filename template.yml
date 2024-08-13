@@ -69,30 +69,30 @@ Resources:
       FifoQueue: true
       ContentBasedDeduplication: true
       VisibilityTimeout: 60
-#
-#  CognitoAuthorizer:
-#    Type: AWS::ApiGateway::Authorizer
-#    Properties:
-#      Name: CognitoUserPoolAuthorizer
-#      Type: COGNITO_USER_POOLS
-#      IdentitySource: method.request.header.Authorization
-#      RestApiId: !Ref EstudoCognitoNovoApi
-#      ProviderARNs:
-#        - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
 
   CognitoAuthorizer:
-    Type: AWS::ApiGatewayV2::Authorizer
+    Type: AWS::ApiGateway::Authorizer
     Properties:
-      ApiId: !Ref EstudoCognitoNovoApi
-      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
-      AuthorizerType: JWT
-      IdentitySource:
-        - "$request.header.Authorization"
-      JwtConfiguration:
-        Audience:
-          - "4f65kq93p9dn2tma46dtnr8jiv"
-        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
-      Name: "CognitoAuthorizer"
+      Name: CognitoUserPoolAuthorizer
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref EstudoCognitoNovoApi
+      ProviderARNs:
+        - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
+
+#  CognitoAuthorizer:
+#    Type: AWS::ApiGatewayV2::Authorizer
+#    Properties:
+#      ApiId: !Ref EstudoCognitoNovoApi
+#      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
+#      AuthorizerType: JWT
+#      IdentitySource:
+#        - "$request.header.Authorization"
+#      JwtConfiguration:
+#        Audience:
+#          - "4f65kq93p9dn2tma46dtnr8jiv"
+#        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
+#      Name: "CognitoAuthorizer"
 
 
 
