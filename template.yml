@@ -34,7 +34,7 @@ Resources:
   DepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: !Join [ "-", [ "oystr-integration-dependencies", !FindInMap [ Environments, !Ref Environment, ResourceSufix ] ] ]
+      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !FindInMap [ Environments, !Ref Environment, ResourceSufix ] ] ]
       Description: Layer com as dependencias python especificadas no requirements.txt
       ContentUri: dependencies
       CompatibleRuntimes:
