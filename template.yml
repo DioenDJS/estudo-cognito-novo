@@ -14,10 +14,12 @@ Mappings:
       QueuePrefix: Development
       ExtractorsEnabled: true
       LoadersEnabled: true
+      ResourceSufix: dev-suffix
     production:
       QueuePrefix: Production
       ExtractorsEnabled: true
       LoadersEnabled: true
+      ResourceSufix: prod-suffix
 
 Globals:
   Function:
@@ -34,7 +36,7 @@ Resources:
   DepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !FindInMap [ Environments, !Ref Environment, ResourceSufix ] ] ]
+      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !Ref Environment ] ]
       Description: Layer com as dependencias python especificadas no requirements.txt
       ContentUri: dependencies
       CompatibleRuntimes:
