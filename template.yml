@@ -80,19 +80,19 @@ Resources:
       ProviderARNs:
         - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
 
-#  CognitoAuthorizer:
-#    Type: AWS::ApiGatewayV2::Authorizer
-#    Properties:
-#      ApiId: !Ref EstudoCognitoNovoApi
-#      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
-#      AuthorizerType: JWT
-#      IdentitySource:
-#        - "$request.header.Authorization"
-#      JwtConfiguration:
-#        Audience:
-#          - "4f65kq93p9dn2tma46dtnr8jiv"
-#        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
-#      Name: "CognitoAuthorizer"
+  CognitoAuthorizerV2:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref EstudoCognitoNovoApi
+      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
+      AuthorizerType: JWT
+      IdentitySource:
+        - "$request.header.Authorization"
+      JwtConfiguration:
+        Audience:
+          - "4f65kq93p9dn2tma46dtnr8jiv"
+        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
+      Name: "CognitoAuthorizers"
 
 
 
@@ -116,3 +116,22 @@ Resources:
             Method: post
             RestApiId: !Ref EstudoCognitoNovoApi
 
+  ColaboradorExtract:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.extractor.colaborador_extract.lambda_handler
+      FunctionName:
+        !Join ["-", ["colaborador-extract", !Ref Environment]]
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonSQSFullAccess
+      Events:
+        PostApiEvent:
+          Type: Api
+          Properties:
+            Path: /colaborador
+            Method: post
+            RestApiId: !Ref CognitoAuthorizerV2
