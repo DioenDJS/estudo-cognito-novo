@@ -96,6 +96,6 @@ Resources:
         PostApiEvent:
           Type: Api
           Properties:
-            Path: /webhook
+            Path: /email
             Method: post
             RestApiId: !Ref EstudoCognitoNovoApi
