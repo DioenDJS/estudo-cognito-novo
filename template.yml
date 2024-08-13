@@ -78,7 +78,7 @@ Resources:
       IdentitySource: method.request.header.Authorization
       RestApiId: !Ref EstudoCognitoNovoApi
       ProviderARNs:
-        - !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}
+        - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
 
 
   EmailExtract:
