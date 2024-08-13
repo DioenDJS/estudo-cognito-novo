@@ -70,6 +70,52 @@ Resources:
       ContentBasedDeduplication: true
       VisibilityTimeout: 60
 
+#  CognitoUserPool:
+#    Type: AWS::Cognito::UserPool
+#    Properties:
+#      AccountRecoverySetting:
+#        AccountRecoverySetting
+#      AdminCreateUserConfig:
+#        AdminCreateUserConfig
+#      AliasAttributes:
+#        - String
+#      AutoVerifiedAttributes:
+#        - String
+#      DeletionProtection: String
+#      DeviceConfiguration:
+#        DeviceConfiguration
+#      EmailConfiguration:
+#        EmailConfiguration
+#      EmailVerificationMessage: String
+#      EmailVerificationSubject: String
+#      EnabledMfas:
+#        - String
+#      LambdaConfig:
+#        LambdaConfig
+#      MfaConfiguration: String
+#      Policies:
+#        Policies
+#      Schema:
+#        - SchemaAttribute
+#      SmsAuthenticationMessage: String
+#      SmsConfiguration:
+#        SmsConfiguration
+#      SmsVerificationMessage: String
+#      UserAttributeUpdateSettings:
+#        UserAttributeUpdateSettings
+#      UsernameAttributes:
+#        - String
+#      UsernameConfiguration:
+#        UsernameConfiguration
+#      UserPoolAddOns:
+#        UserPoolAddOns
+#      UserPoolName: String
+#      UserPoolTags:
+#        Key: Value
+#      VerificationMessageTemplate:
+#        VerificationMessageTemplate
+
+
   CognitoAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:
@@ -80,19 +126,19 @@ Resources:
       ProviderARNs:
         - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
 
-  CognitoAuthorizerV2:
-    Type: AWS::ApiGatewayV2::Authorizer
-    Properties:
-      ApiId: "development-estudo-cognito-novo"
-      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
-      AuthorizerType: JWT
-      IdentitySource:
-        - "$request.header.Authorization"
-      JwtConfiguration:
-        Audience:
-          - "4f65kq93p9dn2tma46dtnr8jiv"
-        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
-      Name: "CognitoAuthorizers"
+#  CognitoAuthorizerV2:
+#    Type: AWS::ApiGatewayV2::Authorizer
+#    Properties:
+#      ApiId: "development-estudo-cognito-novo"
+#      AuthorizerCredentialsArn: "arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM"
+#      AuthorizerType: JWT
+#      IdentitySource:
+#        - "$request.header.Authorization"
+#      JwtConfiguration:
+#        Audience:
+#          - "4f65kq93p9dn2tma46dtnr8jiv"
+#        Issuer: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_8rmbOKvEM"
+#      Name: "CognitoAuthorizers"
 
 
 
@@ -116,22 +162,22 @@ Resources:
             Method: post
             RestApiId: !Ref EstudoCognitoNovoApi
 
-  ColaboradorExtract:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src
-      Handler: handlers.extractor.colaborador_extract.lambda_handler
-      FunctionName:
-        !Join ["-", ["colaborador-extract", !Ref Environment]]
-      Policies:
-        - AWSLambda_FullAccess
-        - AmazonRDSFullAccess
-        - AmazonSSMReadOnlyAccess
-        - AmazonSQSFullAccess
-      Events:
-        PostApiEvent:
-          Type: Api
-          Properties:
-            Path: /colaborador
-            Method: post
-            RestApiId: !Ref CognitoAuthorizerV2
+#  ColaboradorExtract:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      CodeUri: src
+#      Handler: handlers.extractor.colaborador_extract.lambda_handler
+#      FunctionName:
+#        !Join ["-", ["colaborador-extract", !Ref Environment]]
+#      Policies:
+#        - AWSLambda_FullAccess
+#        - AmazonRDSFullAccess
+#        - AmazonSSMReadOnlyAccess
+#        - AmazonSQSFullAccess
+#      Events:
+#        PostApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: /colaborador
+#            Method: post
+#            RestApiId: !Ref CognitoAuthorizerV2
