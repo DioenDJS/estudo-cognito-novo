@@ -21,10 +21,10 @@ Mappings:
 #      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
 #      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
       QueuePrefix: Development
-      QueueSufix: dev-suffix
+      QueueSufix: Development
       ExtractorsEnabled: true
       LoadersEnabled: true
-      ResourceSufix: dev-suffix
+      ResourceSufix: development
     production:
       QueuePrefix: Production
       QueueSufix: prod-suffix
@@ -48,7 +48,7 @@ Resources:
   DepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !Ref Environment ] ]
+      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !FindInMap [Environments, !Ref Environment, ResourceSufix]]]
       Description: Layer com as dependencias python especificadas no requirements.txt
       ContentUri: dependencies
       CompatibleRuntimes:
