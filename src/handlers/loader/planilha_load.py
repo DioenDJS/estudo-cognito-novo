@@ -1,9 +1,13 @@
 import structlog
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import boto3
+from botocore.exceptions import ClientError
 from pony.orm import db_session, select
 from database import db
 from datetime import datetime
+import json
+import os
 
 
 def lambda_handler(event, context):
@@ -20,11 +24,26 @@ def lambda_handler(event, context):
     headers = result_data.get('headers', [])
     rows = result_data.get('rows', [])
 
-    # Autenticação com as credenciais do Google
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("cellular-block-362701-ea5b62201eea.json", scope)
+    # Nome do bucket S3 e chave do objeto
+    bucket_name = "cellular-block"
+    s3_key = "cellular-block-362701-ea5b62201eea.json"
+
+    # Baixa o arquivo JSON do S3
+    json_file_path = '/tmp/cellular-block-362701-ea5b62201eea.json'
+    s3 = boto3.client('s3')
 
     try:
+        s3.download_file(bucket_name, s3_key, json_file_path)
+        logger.info("Arquivo JSON baixado do S3 com sucesso.")
+    except ClientError as e:
+        logger.error(f"Erro ao baixar o arquivo JSON do S3: {e}")
+        raise e
+
+    # Autenticação com as credenciais do Google
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(json_file_path, scope)
         client = gspread.authorize(creds)
         # Tenta abrir a planilha pelo nome
         sheet = client.open("integration-planilha").sheet1
