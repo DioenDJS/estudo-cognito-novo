@@ -1,5 +1,5 @@
 import structlog
-from helpers.aws import sqs_utils
+# from helpers.aws import sqs_utils
 from datetime import datetime, timezone
 
 
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
 
         converted_rows.append({"headers":headers, "rows": converted_row, "codigo":1})
 
-        sqs_utils.send_message_batch(object_list=converted_rows, object_id_key='codigo', queue_url=queue_url)
+        # sqs_utils.send_message_batch(object_list=converted_rows, object_id_key='codigo', queue_url=queue_url)
     except Exception as e:
         logger.error(f'Erro encontrado durante a integração: {str(e)}')
         raise e
