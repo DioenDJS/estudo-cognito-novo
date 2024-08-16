@@ -36,6 +36,8 @@ def lambda_handler(event, context):
 
         converted_rows.append({"headers":headers, "rows": converted_row, "codigo":1})
 
+        logger.info(f"converted_rows: {converted_rows}")
+
         # sqs_utils.send_message_batch(object_list=converted_rows, object_id_key='codigo', queue_url=queue_url)
     except Exception as e:
         logger.error(f'Erro encontrado durante a integração: {str(e)}')
