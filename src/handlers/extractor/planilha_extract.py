@@ -1,9 +1,10 @@
 import structlog
-from src.helpers.aws import sqs_utils
+from src.helpers.aws import sqs_utils, envvars
 from datetime import datetime, timezone
 
 
 def lambda_handler(event, context):
+    queue_url = envvars.get("SHEETS_QUEUE_URL")
     try:
         logger = structlog.get_logger()
         logger.info('Iniciando extração de registros.')
@@ -40,6 +41,3 @@ def lambda_handler(event, context):
         logger.error(f'Erro encontrado durante a integração: {str(e)}')
         raise e
 
-
-if __name__ == '__main__':
-    lambda_handler(event=None, context=None)

@@ -42,6 +42,7 @@ Globals:
     Environment:
       Variables:
         ENVIRONMENT: !Ref Environment
+        SHEETS_QUEUE_URL: !Ref SheetsQueue
 
 Resources:
   DepLayer:
