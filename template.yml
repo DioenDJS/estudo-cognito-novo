@@ -11,6 +11,15 @@ Parameters:
 Mappings:
   Environments:
     development:
+      AUTH_PROVIDER: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
+      AUTH_URI: "parameters///estudo-cognito-novo/auth_uri"
+      CLIENT_EMAIL: "parameters///estudo-cognito-novo/client_email"
+      CLIENT_ID: "parameters///estudo-cognito-novo/client_id"
+      CLIENT_CERT_URL: "parameters///estudo-cognito-novo/client_x509_cert_url"
+      PRIVATE_KEY: "parameters///estudo-cognito-novo/private_key"
+      PRIVATE_KEY_ID: "parameters///estudo-cognito-novo/private_key_id"
+      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
+      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
       QueuePrefix: Development
       ExtractorsEnabled: true
       LoadersEnabled: true
@@ -54,6 +63,14 @@ Resources:
         AllowOrigin: "'*'"
         AllowMethods: "'POST, OPTIONS'"
         AllowHeaders: "'*'"
+
+  SheetsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join [ "", [ !FindInMap [ Environments, !Ref Environment, QueueSufix ], "SheetsQueue.fifo" ] ]
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
 
   EstudoCognitoNovoQueue:
     Type: AWS::SQS::Queue
@@ -99,3 +116,44 @@ Resources:
             Path: /email
             Method: post
             RestApiId: !Ref EstudoCognitoNovoApi
+
+  PlanilhaExtract:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.extractor.planilha_extract.lambda_handler
+      FunctionName: !Join [ "-", [ "planilha-extract", !FindInMap [ Environments, !Ref Environment, ResourceSufix ] ] ]
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonSQSFullAccess
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Description: "Atualiza"
+            Schedule: cron(* * * * ? *)
+
+  PlanilhaLoad:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.loader.planilha_load.lambda_handler
+      FunctionName: !Join ["-", ["planilha-load", !FindInMap [Environments, !Ref Environment, ResourceSufix]]]
+      ReservedConcurrentExecutions: 2
+      Timeout: 60
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSQSFullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - SecretsManagerReadWrite
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SheetsQueue.Arn
+            BatchSize: 10
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
