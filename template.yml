@@ -11,15 +11,15 @@ Parameters:
 Mappings:
   Environments:
     development:
-      AUTH_PROVIDER_URL: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
-      AUTH_URI: "parameters///estudo-cognito-novo/auth_uri"
-      CLIENT_EMAIL: "parameters///estudo-cognito-novo/client_email"
-      CLIENT_ID: "parameters///estudo-cognito-novo/client_id"
-      CLIENT_CERT_URL: "parameters///estudo-cognito-novo/client_x509_cert_url"
-      PRIVATE_KEY: "parameters///estudo-cognito-novo/private_key"
-      PRIVATE_KEY_ID: "parameters///estudo-cognito-novo/private_key_id"
-      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
-      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
+#      AUTH_PROVIDER_URL: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
+#      AUTH_URI: "parameters///estudo-cognito-novo/auth_uri"
+#      CLIENT_EMAIL: "parameters///estudo-cognito-novo/client_email"
+#      CLIENT_ID: "parameters///estudo-cognito-novo/client_id"
+#      CLIENT_CERT_URL: "parameters///estudo-cognito-novo/client_x509_cert_url"
+#      PRIVATE_KEY: "parameters///estudo-cognito-novo/private_key"
+#      PRIVATE_KEY_ID: "parameters///estudo-cognito-novo/private_key_id"
+#      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
+#      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
       QueuePrefix: Development
       ExtractorsEnabled: true
       LoadersEnabled: true
