@@ -1,5 +1,5 @@
 import structlog
-from src.helpers.aws import sqs_utils, envvars
+from helpers.aws import sqs_utils, envvars
 from datetime import datetime, timezone
 
 
