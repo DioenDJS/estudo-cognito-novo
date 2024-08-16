@@ -124,7 +124,7 @@ Resources:
     Properties:
       CodeUri: src
       Handler: handlers.extractor.planilha_extract.lambda_handler
-      FunctionName: !Join [ "-", [ "planilha-extract", !FindInMap [ Environments, !Ref Environment, ResourceSufix ] ] ]
+      FunctionName: !Join [ "-", [ "planilha-extract", !Ref Environment ] ]
       Policies:
         - AWSLambda_FullAccess
         - AmazonRDSFullAccess
@@ -142,7 +142,7 @@ Resources:
     Properties:
       CodeUri: src
       Handler: handlers.loader.planilha_load.lambda_handler
-      FunctionName: !Join ["-", ["planilha-load", !FindInMap [Environments, !Ref Environment, ResourceSufix]]]
+      FunctionName: !Join ["-", ["planilha-load", !Ref Environment ]]
       Timeout: 60
       Policies:
         - AWSLambda_FullAccess
