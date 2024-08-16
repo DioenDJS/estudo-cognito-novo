@@ -143,7 +143,6 @@ Resources:
       CodeUri: src
       Handler: handlers.loader.planilha_load.lambda_handler
       FunctionName: !Join ["-", ["planilha-load", !FindInMap [Environments, !Ref Environment, ResourceSufix]]]
-      ReservedConcurrentExecutions: 2
       Timeout: 60
       Policies:
         - AWSLambda_FullAccess
@@ -156,6 +155,4 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt SheetsQueue.Arn
-            BatchSize: 10
-            FunctionResponseTypes:
-              - ReportBatchItemFailures
+            BatchSize: 1
