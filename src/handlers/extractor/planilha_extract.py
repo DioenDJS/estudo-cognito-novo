@@ -1,10 +1,10 @@
 import structlog
-from helpers.aws import sqs_utils, envvars
+from helpers.aws import sqs_utils
 from datetime import datetime, timezone
 
 
 def lambda_handler(event, context):
-    queue_url = envvars.get("SHEETS_QUEUE_URL")
+    # queue_url = envvars.get("SHEETS_QUEUE_URL")
     try:
         logger = structlog.get_logger()
         logger.info('Iniciando extração de registros.')
