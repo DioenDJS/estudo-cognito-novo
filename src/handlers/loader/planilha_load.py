@@ -3,11 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import boto3
 from botocore.exceptions import ClientError
-from pony.orm import db_session, select
-from database import db
-from datetime import datetime
 import json
-import os
 
 
 def lambda_handler(event, context):
