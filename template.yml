@@ -21,11 +21,13 @@ Mappings:
 #      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
 #      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
       QueuePrefix: Development
+      QueueSufix: dev-suffix
       ExtractorsEnabled: true
       LoadersEnabled: true
       ResourceSufix: dev-suffix
     production:
       QueuePrefix: Production
+      QueueSufix: prod-suffix
       ExtractorsEnabled: true
       LoadersEnabled: true
       ResourceSufix: prod-suffix
