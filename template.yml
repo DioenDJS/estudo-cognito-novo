@@ -11,7 +11,7 @@ Parameters:
 Mappings:
   Environments:
     development:
-      AUTH_PROVIDER: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
+      AUTH_PROVIDER_URL: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
       AUTH_URI: "parameters///estudo-cognito-novo/auth_uri"
       CLIENT_EMAIL: "parameters///estudo-cognito-novo/client_email"
       CLIENT_ID: "parameters///estudo-cognito-novo/client_id"
