@@ -1,6 +1,7 @@
 import os
 import parameters, secrets
 
+
 def get(key, default=None):
     result = os.getenv(key, default)
     result_str = str(result)

@@ -27,10 +27,10 @@ Mappings:
       ResourceSufix: development
     production:
       QueuePrefix: Production
-      QueueSufix: prod-suffix
+      QueueSufix: Production
       ExtractorsEnabled: true
       LoadersEnabled: true
-      ResourceSufix: prod-suffix
+      ResourceSufix: production
 
 Globals:
   Function:
