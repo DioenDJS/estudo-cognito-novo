@@ -136,7 +136,7 @@ Resources:
           Type: Schedule
           Properties:
             Description: "Atualiza"
-            Schedule: cron(* * * * ? *)
+#            Schedule: cron(* * * * ? *)
 
   PlanilhaLoad:
     Type: AWS::Serverless::Function
