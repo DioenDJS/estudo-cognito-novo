@@ -1,15 +1,17 @@
 import structlog
-# from helpers.aws import sqs_utils
+from helpers.aws import envvars
+# from helpers.aws import sqs_utils,envvars
 from datetime import datetime, timezone
 
 
 def lambda_handler(event, context):
-    # queue_url = envvars.get("SHEETS_QUEUE_URL")
+    queue_url = envvars.get("SHEETS_QUEUE_URL")
     try:
         logger = structlog.get_logger()
         logger.info('Iniciando extração de registros.')
         logger.info(event)
         logger.info(context)
+        logger.info(f"queue_url: {queue_url}")
 
         result ={
             "description": ['data_lancamento', 'projeto', 'descricao', 'valor', 'valor_absoluto', 'origem', 'cliente', 'status', 'categoria'],
@@ -34,7 +36,7 @@ def lambda_handler(event, context):
                 else:
                     converted_row.append(value)
 
-        converted_rows.append({"headers":headers, "rows": converted_row, "codigo":1})
+        converted_rows.append({"headers": headers, "rows": converted_row, "codigo": 1})
 
         logger.info(f"converted_rows: {converted_rows}")
 
