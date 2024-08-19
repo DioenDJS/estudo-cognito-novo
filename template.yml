@@ -11,13 +11,26 @@ Parameters:
 Mappings:
   Environments:
     development:
+#      AUTH_PROVIDER_URL: "parameters///estudo-cognito-novo/auth_provider_x509_cert_url"
+#      AUTH_URI: "parameters///estudo-cognito-novo/auth_uri"
+#      CLIENT_EMAIL: "parameters///estudo-cognito-novo/client_email"
+#      CLIENT_ID: "parameters///estudo-cognito-novo/client_id"
+#      CLIENT_CERT_URL: "parameters///estudo-cognito-novo/client_x509_cert_url"
+#      PRIVATE_KEY: "parameters///estudo-cognito-novo/private_key"
+#      PRIVATE_KEY_ID: "parameters///estudo-cognito-novo/private_key_id"
+#      PROJECT_ID: "parameters///estudo-cognito-novo/project_id"
+#      TOKEN_URI: "parameters///estudo-cognito-novo/token_uri"
       QueuePrefix: Development
+      QueueSufix: Development
       ExtractorsEnabled: true
       LoadersEnabled: true
+      ResourceSufix: development
     production:
       QueuePrefix: Production
+      QueueSufix: Production
       ExtractorsEnabled: true
       LoadersEnabled: true
+      ResourceSufix: production
 
 Globals:
   Function:
@@ -25,12 +38,23 @@ Globals:
     MemorySize: 256
     Timeout: 600
     Layers:
-      - !FindInMap [Environments, !Ref Environment, CertificateLayer]
+      - Ref: DepLayer
     Environment:
       Variables:
         ENVIRONMENT: !Ref Environment
+        SHEETS_QUEUE_URL: !Ref SheetsQueue
 
 Resources:
+  DepLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Join [ "-", [ "estudo-cognito-novo-dependencies", !FindInMap [Environments, !Ref Environment, ResourceSufix]]]
+      Description: Layer com as dependencias python especificadas no requirements.txt
+      ContentUri: dependencies
+      CompatibleRuntimes:
+        - python3.9
+      LicenseInfo: "MIT"
+
   EstudoCognitoNovoApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -42,6 +66,14 @@ Resources:
         AllowOrigin: "'*'"
         AllowMethods: "'POST, OPTIONS'"
         AllowHeaders: "'*'"
+
+  SheetsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join [ "", [ !FindInMap [ Environments, !Ref Environment, QueueSufix ], "SheetsQueue.fifo" ] ]
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
 
   EstudoCognitoNovoQueue:
     Type: AWS::SQS::Queue
@@ -57,6 +89,16 @@ Resources:
       FifoQueue: true
       ContentBasedDeduplication: true
       VisibilityTimeout: 60
+
+  CognitoAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: CognitoUserPoolAuthorizer
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref EstudoCognitoNovoApi
+      ProviderARNs:
+        - !Sub arn:aws:cognito-idp:us-east-2:637423655019:userpool/us-east-2_8rmbOKvEM
 
   EmailExtract:
     Type: AWS::Serverless::Function
@@ -74,6 +116,44 @@ Resources:
         PostApiEvent:
           Type: Api
           Properties:
-            Path: /webhook
+            Path: /email
             Method: post
             RestApiId: !Ref EstudoCognitoNovoApi
+
+  PlanilhaExtract:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.extractor.planilha_extract.lambda_handler
+      FunctionName: !Join [ "-", [ "planilha-extract", !Ref Environment ] ]
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonSQSFullAccess
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Description: "Atualiza"
+            Schedule: cron(* * * * ? *)
+
+  PlanilhaLoad:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handlers.loader.planilha_load.lambda_handler
+      FunctionName: !Join ["-", ["planilha-load", !Ref Environment ]]
+      Timeout: 60
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSQSFullAccess
+        - AmazonRDSFullAccess
+        - AmazonSSMReadOnlyAccess
+        - SecretsManagerReadWrite
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SheetsQueue.Arn
+            BatchSize: 1

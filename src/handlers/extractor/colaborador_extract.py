@@ -12,11 +12,10 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'headers': {
-                "Content-Type": "application/json",  # Corrected typo
+                "Content-Type": "application/json",
             },
             'body': json.dumps({
-                "name": "Dioane",
-                "email": "diovane2gmail.com"
+                "name": "Dioane"
             })
 
         }
